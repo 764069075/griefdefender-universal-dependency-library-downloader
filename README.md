@@ -3,7 +3,7 @@
 
 If sometimes some lib files cannot be downloaded, then you will need this.
 
-Adapt to all current griefdefender versions, proxy, multi-threaded, universal dependency library downloader
+Adapt to all current griefdefender versions, proxy, multi-threaded, sha1 check, universal dependency library downloader
 
 written in python
 
@@ -11,6 +11,6 @@ written in python
 
 是否有时候无法下载下来一些lib文件，那么你将需要这个。
 
-适配目前所有griefdefender版本，可代理，多线程，万能依赖库下载器
+适配目前所有griefdefender版本，可代理，多线程，sha1校验，万能依赖库下载器
 
 使用python编写
