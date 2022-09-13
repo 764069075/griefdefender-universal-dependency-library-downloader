@@ -1,3 +1,4 @@
+from socket import timeout
 from zipfile import is_zipfile,ZipFile
 from requests import get
 from concurrent.futures import ThreadPoolExecutor
@@ -10,21 +11,29 @@ from sys import exit
 from threading import active_count
 from time import sleep
 
+print(' '*94)
+print(' '*39+'欢迎使用 Welcome'+' '*39)
+print(' '*94)
+print(' '*20+'griefdefender全版本万能依赖库下载器 library-downloader'+' '*20)
+print(' '*94)
+print(' '*27+'GPL-3.0 license GITHUB 开源地址 website：'+' '*26)
+print(' '*94)
+print(' '*6+'https://github.com/764069075/griefdefender-universal-dependency-library-downloader'+' '*6)
+print(' '*94)
+
+sleep(3)
+
 files='./jar/'
 
-print('开始读取jar文件夹下的jar包数据。。。')
-
-sleep(1)
+print('\n\n开始读取jar文件夹下的jar包数据。。。')
 
 if not exists(files):
     
-    print('未能找到jar文件夹。。开始创建。。。\n')
-
-    sleep(1)
+    print('未能找到jar文件夹。。开始创建。。。')
 
     mkdir(files)
 
-    print('jar文件夹创建成功！请将jar包放入此文件夹。\n')
+    print('jar文件夹创建成功！请将jar包放入此文件夹。\n\n')
 
     sleep(1)
 
@@ -34,9 +43,9 @@ if not exists(files):
 
     startfile(abspath(files))
 
-    sleep(1)
+    sleep(2)
 
-    input('如果已经放入jar文件到jar文件夹，请按Enter键：')
+    input('> 如果已经放入jar文件到jar文件夹，请按Enter键：')
 
 def jiance(p):
 
@@ -44,9 +53,7 @@ def jiance(p):
     
     return [i for i in path if is_zipfile(i)]
 
-print('\n*** 正在检测jar文件 ***\n')
-
-sleep(1)
+print('\n'+'*'*16+' 正在检测jar文件 '+'*'*16+'\n')
 
 while len(jiance(files+'*.jar')) < 1:
 
@@ -68,23 +75,18 @@ pt=jiance(files+'*.jar')
 
 print('\n> 发现 %d 个jar <'%(len(pt)))
 
-sleep(1)
-
 for i,k in zip(pt,range(len(pt))):
 
     print(str(k+1)+'.',split(i)[-1])
 
-sleep(1)
-
-print('\n\n-------开始下载-------\n')
-
-sleep(1)
+print('\n\n'+'-'*18+' 开始下载 '+'-'*18+'\n')
 
 print('依赖文件将会被自动下载并分类到downloads文件夹下。。。\n')
 
-sleep(1)
 
 def dlfile(url,path,file_name,version,jindu,length):
+
+    global failed
     
     if not exists(split(path)[0]):
 
@@ -93,8 +95,16 @@ def dlfile(url,path,file_name,version,jindu,length):
     with open(path,'wb')as t:
         
         print('## 正在下载 |'+split(path)[-1]+' |文件序列%d |<如下载过久说明文件过大，请耐心等待，直至下载程序结束>'%(jindu))
-        
-        t.write(get(url).content)
+
+        try:
+
+            t.write(get(url).content)
+
+        except Exception as e:
+
+            failed += 1
+
+            print('\n\n%s 在下载时发生异常：%s\n\n'%(split(path)[-1],e))
         
         print('√ 下载完成 |%s |%s |文件序列'%(file_name,version)+str(jindu)+' |共'+str(length)+' |剩'+str(active_count()-1)+'个文件正在下载')
 
@@ -108,11 +118,11 @@ TPE=ThreadPoolExecutor(int(worker))
 
 data_file='./downloads/'
 
+failed = 0
+
 for i in jiance(files+'*.jar'):
 
     print('\n※正在读取%s\n'%(split(i)[-1]))
-
-    sleep(1)
 #     需要下载的json数据所在文件
     jss=[]
 #     打开压缩包
@@ -131,11 +141,15 @@ for i in jiance(files+'*.jar'):
 
             bb = [k+'.json' for k in banben.split('+')]
 
-            print('\n正在解析输入的版本。。。\n')
-
-            sleep(1)
+            print('\n正在解析您输入的版本。。。\n')
 
             banben = [k for k in bb if k in jss]
+
+            if len(banben) < 1:
+
+                print('未读取到相匹配的版本，请重新输入')
+
+                continue
 
             print('解析后的版本：\n')
 
@@ -143,7 +157,7 @@ for i in jiance(files+'*.jar'):
 
                 print('·',k[:-5])
         
-            if input('\n是否解析正确？如有误请输入 n 重新输入，正确请直接回车：') == '':
+            if input('\n是否解析正确，符合您的需求？如有误请输入 n 重新输入，正确请直接回车开始下载：') == '':
 
                 jss = banben
                 
@@ -201,7 +215,11 @@ for i in jiance(files+'*.jar'):
                 
 TPE.shutdown(wait=True)
 
-print('\no(￣▽￣)ｄ已全部下载完毕。。。')
+print('\no(￣▽￣)ｄ下载/校验完毕。。。')
+
+if failed > 0:
+    
+    print('有%d个文件下载失败,请检查网络后，重新运行下载'%(failed))
 
 input('\n按任意键打开downloads文件夹...并退出')
 
